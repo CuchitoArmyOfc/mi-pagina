@@ -1,0 +1,350 @@
+---
+import { Image } from 'astro:assets';
+import preview from '@/assets/chocobets-preview.png';
+import { chocoBets } from '@/data/chocobets';
+import { communityChannels } from '@/data/channels';
+import Icon from '@/components/ui/Icon.astro';
+
+const predictionChannels = communityChannels.filter((c) => c.category === 'Pronósticos');
+---
+
+<div class="cb-modal" id="chocobets-modal" hidden>
+  <div class="cb-modal__backdrop" id="chocobets-backdrop"></div>
+  <div
+    class="cb-modal__panel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="chocobets-modal-title"
+  >
+    <button type="button" class="cb-modal__close" id="chocobets-close" aria-label="Cerrar">
+      <Icon name="close" size={18} strokeWidth={2} />
+    </button>
+
+    <a
+      href={chocoBets.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="cb-modal__preview"
+      aria-label={chocoBets.cta}
+    >
+      <Image
+        src={preview}
+        alt="Vista previa de Choco Bets: análisis deportivo para decidir con más criterio"
+        width={460}
+        height={184}
+        class="cb-modal__preview-img"
+        loading="lazy"
+        format="webp"
+        quality={78}
+      />
+    </a>
+
+    <div class="cb-modal__body">
+      <p class="cb-modal__eyebrow">{chocoBets.eyebrow}</p>
+      <h2 class="cb-modal__title" id="chocobets-modal-title">{chocoBets.name}</h2>
+      <p class="cb-modal__desc">{chocoBets.description}</p>
+
+      <ul class="cb-modal__benefits">
+        {chocoBets.benefits.map((benefit) => (
+          <li>
+            <Icon name="target" class="cb-modal__benefit-icon" size={16} strokeWidth={1.8} />
+            <span>{benefit}</span>
+          </li>
+        ))}
+      </ul>
+
+      <a
+        href={chocoBets.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="cb-modal__cta"
+        id="chocobets-direct-entry"
+      >
+        {chocoBets.cta}
+        <Icon name="arrow-right" class="cb-modal__cta-icon" size={17} strokeWidth={2} />
+      </a>
+
+      <a
+        href={chocoBets.seller.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="cb-modal__seller"
+      >
+        <Icon name="shield" size={14} strokeWidth={1.8} />
+        {chocoBets.seller.label}: <strong>{chocoBets.seller.handle}</strong>
+      </a>
+
+      {predictionChannels.length > 0 && (
+        <div class="cb-modal__alt">
+          <span>O sigue los pronósticos por:</span>
+          <div class="cb-modal__alt-links">
+            {predictionChannels.map((channel) => (
+              <a href={channel.href} target="_blank" rel="noopener noreferrer" class="cb-modal__alt-link">
+                <Icon name={channel.icon} size={14} strokeWidth={1.8} />
+                {channel.platform === 'telegram' ? 'Telegram' : 'WhatsApp'}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <p class="cb-modal__legal">{chocoBets.legal}</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cb-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .cb-modal[hidden] {
+    display: none;
+  }
+
+  .cb-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 4, 7, 0.78);
+    backdrop-filter: blur(6px);
+    animation: cbFadeIn var(--duration-base) var(--ease-out);
+  }
+
+  .cb-modal__panel {
+    position: relative;
+    width: min(460px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    background: linear-gradient(160deg, var(--surface-elevated) 0%, var(--surface) 100%);
+    border: 1px solid rgba(20, 184, 166, 0.3);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.7);
+    animation: cbSlideUp var(--duration-base) var(--ease-out);
+  }
+
+  .cb-modal__close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: #fff;
+    background: rgba(4, 4, 7, 0.55);
+    backdrop-filter: blur(4px);
+  }
+
+  .cb-modal__close:hover {
+    background: rgba(4, 4, 7, 0.8);
+  }
+
+  .cb-modal__preview {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: 1px solid rgba(20, 184, 166, 0.25);
+  }
+
+  .cb-modal__preview::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(4, 4, 7, 0.35), transparent 45%);
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-out);
+  }
+
+  .cb-modal__preview:hover::after,
+  .cb-modal__preview:focus-visible::after {
+    opacity: 1;
+  }
+
+  .cb-modal__preview-img {
+    display: block;
+    width: 100%;
+    height: 184px;
+    object-fit: cover;
+    object-position: top center;
+    transition: transform 0.4s var(--ease-out);
+  }
+
+  .cb-modal__preview:hover .cb-modal__preview-img {
+    transform: scale(1.04);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cb-modal__preview-img {
+      transition: none;
+    }
+  }
+
+  .cb-modal__body {
+    padding: 28px 32px 32px;
+  }
+
+  .cb-modal__eyebrow {
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #2dd4bf;
+  }
+
+  .cb-modal__title {
+    margin-top: 8px;
+    font-size: 2.1rem;
+    color: var(--text-primary);
+  }
+
+  .cb-modal__desc {
+    margin-top: 12px;
+    font-size: var(--fs-body);
+    color: var(--text-secondary);
+  }
+
+  .cb-modal__benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  .cb-modal__benefits li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: var(--fs-small);
+    color: var(--text-secondary);
+  }
+
+  :global(.cb-modal__benefit-icon) {
+    flex-shrink: 0;
+    color: #2dd4bf;
+  }
+
+  .cb-modal__cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 26px;
+    padding: 16px;
+    font-weight: 600;
+    font-size: var(--fs-body);
+    color: #04211d;
+    background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%);
+    border-radius: var(--radius-pill);
+    box-shadow: 0 10px 30px -10px rgba(20, 184, 166, 0.6);
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .cb-modal__cta:hover {
+    transform: translateY(-2px);
+  }
+
+  .cb-modal__seller {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 14px;
+    font-size: var(--fs-small);
+    color: var(--text-tertiary);
+    transition: color var(--duration-base) var(--ease-out);
+  }
+
+  .cb-modal__seller:hover {
+    color: #2dd4bf;
+  }
+
+  .cb-modal__seller strong {
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  .cb-modal__seller:hover strong {
+    color: #2dd4bf;
+  }
+
+  .cb-modal__alt {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-subtle);
+    font-size: var(--fs-small);
+    color: var(--text-tertiary);
+  }
+
+  .cb-modal__alt-links {
+    display: flex;
+    gap: 10px;
+  }
+
+  .cb-modal__alt-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-pill);
+    transition: color var(--duration-base) var(--ease-out),
+      border-color var(--duration-base) var(--ease-out);
+  }
+
+  .cb-modal__alt-link:hover {
+    color: var(--text-primary);
+    border-color: #2dd4bf;
+  }
+
+  .cb-modal__legal {
+    margin-top: 22px;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: var(--text-tertiary);
+  }
+
+  @keyframes cbFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes cbSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cb-modal__backdrop,
+    .cb-modal__panel {
+      animation: none;
+    }
+  }
+</style>

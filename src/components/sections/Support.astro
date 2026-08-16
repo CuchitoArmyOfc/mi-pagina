@@ -1,0 +1,78 @@
+---
+import { support } from '@/data/support';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+---
+
+<section class="section support-section">
+  <div class="container">
+    <div class="support-card" data-reveal>
+      <span class="support-card__icon"><Icon name="lifebuoy" size={24} strokeWidth={1.5} /></span>
+      <div class="support-card__body">
+        <h3 class="support-card__name">{support.name}</h3>
+        <p class="support-card__role">{support.role}</p>
+        <p class="support-card__desc">{support.description}</p>
+      </div>
+      <Button href={support.href} variant="secondary" size="md" external showArrow>
+        {support.cta}
+      </Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .support-section {
+    padding-block: 0 var(--section-y);
+  }
+
+  .support-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 30px;
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+  }
+
+  .support-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 152, 0, 0.12);
+    color: var(--orange);
+    flex-shrink: 0;
+  }
+
+  .support-card__body {
+    flex: 1;
+  }
+
+  .support-card__name {
+    color: var(--text-primary);
+  }
+
+  .support-card__role {
+    margin-top: 3px;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--orange);
+  }
+
+  .support-card__desc {
+    margin-top: 10px;
+    font-size: var(--fs-body);
+    max-width: 52ch;
+  }
+
+  @media (min-width: 720px) {
+    .support-card {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+</style>

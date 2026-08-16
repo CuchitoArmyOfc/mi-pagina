@@ -1,0 +1,148 @@
+---
+import type { Channel } from '@/types/channel';
+import Icon from './Icon.astro';
+
+export interface Props {
+  channel: Channel;
+}
+
+const { channel } = Astro.props;
+---
+
+<a
+  href={channel.href}
+  class:list={['channel', `channel--${channel.accent}`]}
+  target="_blank"
+  rel="noopener noreferrer"
+  data-reveal
+>
+  <span class="channel__icon"><Icon name={channel.icon} size={22} strokeWidth={1.6} /></span>
+  <span class="channel__body">
+    <span class="channel__top">
+      <span class="channel__title">{channel.title}</span>
+      <span class="channel__platform">{channel.platform === 'telegram' ? 'Telegram' : 'WhatsApp'}</span>
+    </span>
+    <span class="channel__desc">{channel.description}</span>
+  </span>
+  <span class="channel__cta">
+    {channel.cta}
+    <Icon name="arrow-right" class="channel__cta-icon" size={15} strokeWidth={2} />
+  </span>
+</a>
+
+<style>
+  .channel {
+    --accent-color: var(--orange);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px 22px;
+    /* Grid items default to min-width:auto, so the nowrap text in
+       .channel__desc would otherwise force this track to its max-content
+       width and blow out the 2-column grid instead of respecting 1fr. */
+    min-width: 0;
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    transition: transform var(--duration-base) var(--ease-out),
+      border-color var(--duration-base) var(--ease-out),
+      background-color var(--duration-base) var(--ease-out);
+  }
+
+  .channel--green {
+    --accent-color: var(--green);
+  }
+  .channel--blue {
+    --accent-color: var(--blue);
+  }
+  .channel--purple {
+    --accent-color: var(--purple);
+  }
+  .channel--orange {
+    --accent-color: var(--orange);
+  }
+
+  .channel:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--accent-color) 45%, var(--border-default));
+    background: var(--surface-hover);
+  }
+
+  .channel__icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--accent-color) 14%, transparent);
+    color: var(--accent-color);
+  }
+
+  .channel__body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .channel__top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .channel__title {
+    font-family: var(--font-body);
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .channel__platform {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+  }
+
+  .channel__desc {
+    font-size: var(--fs-small);
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .channel__cta {
+    flex-shrink: 0;
+    display: none;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--accent-color);
+  }
+
+  :global(.channel__cta-icon) {
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .channel:hover :global(.channel__cta-icon) {
+    transform: translateX(3px);
+  }
+
+  @media (min-width: 640px) {
+    .channel__cta {
+      display: inline-flex;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .channel__desc {
+      white-space: normal;
+    }
+  }
+</style>
