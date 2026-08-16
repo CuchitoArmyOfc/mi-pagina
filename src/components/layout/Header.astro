@@ -1,0 +1,246 @@
+---
+import { primaryNav, ctaNav } from '@/data/navigation';
+import Icon from '@/components/ui/Icon.astro';
+import Button from '@/components/ui/Button.astro';
+---
+
+<header class="header" id="site-header">
+  <div class="container header__row">
+    <a href="#inicio" class="header__brand">
+      <img src="/logo.png" width="36" height="36" alt="" class="header__logo" loading="eager" decoding="async" />
+      <span class="header__wordmark">CUCHITO ARMY</span>
+    </a>
+
+    <nav class="header__nav" aria-label="Navegación principal">
+      <ul>
+        {primaryNav.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <Button href={ctaNav.href} size="md" class="header__cta">{ctaNav.label}</Button>
+      <button
+        type="button"
+        class="header__menu-btn"
+        id="menu-toggle"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        aria-label="Abrir menú"
+      >
+        <Icon name="menu" class="icon-open" size={24} />
+        <Icon name="close" class="icon-close" size={24} />
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-nav" id="mobile-nav" hidden>
+  <div class="mobile-nav__backdrop" id="mobile-nav-backdrop"></div>
+  <nav class="mobile-nav__panel" aria-label="Navegación móvil">
+    <ul>
+      {primaryNav.map((item) => (
+        <li><a href={item.href} class="mobile-nav-link">{item.label}</a></li>
+      ))}
+    </ul>
+    <Button href={ctaNav.href} size="lg" class="mobile-nav-link" style="width: 100%; margin-top: 8px;">
+      {ctaNav.label}
+    </Button>
+  </nav>
+</div>
+
+<script>
+  import '@/scripts/mobile-nav';
+</script>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    /* Above .mobile-nav (z-index 150) so the toggle button stays clickable
+       (and visible, un-dimmed) while the drawer is open. */
+    z-index: 160;
+    background: rgba(8, 9, 13, 0.72);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .header__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    height: 72px;
+  }
+
+  .header__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .header__logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid rgba(255, 152, 0, 0.5);
+  }
+
+  .header__wordmark {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    letter-spacing: 0.02em;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .header__nav {
+    display: none;
+  }
+
+  .header__nav ul {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .header__nav a {
+    display: inline-block;
+    padding: 9px 13px;
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: color var(--duration-base) var(--ease-out),
+      background-color var(--duration-base) var(--ease-out);
+  }
+
+  .header__nav a:hover {
+    color: var(--text-primary);
+    background: var(--surface);
+  }
+
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .header__cta {
+    display: none;
+  }
+
+  .header__menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+  }
+
+  .header__menu-btn .icon-close {
+    display: none;
+  }
+
+  .header__menu-btn[aria-expanded='true'] .icon-open {
+    display: none;
+  }
+
+  .header__menu-btn[aria-expanded='true'] .icon-close {
+    display: block;
+  }
+
+  @media (min-width: 1040px) {
+    .header__nav {
+      display: block;
+    }
+    .header__cta {
+      display: inline-flex;
+    }
+    .header__menu-btn {
+      display: none;
+    }
+  }
+
+  /* ===== Mobile drawer ===== */
+  .mobile-nav {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+  }
+
+  .mobile-nav[hidden] {
+    display: none;
+  }
+
+  .mobile-nav__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 4, 7, 0.72);
+    backdrop-filter: blur(4px);
+    animation: fadeIn var(--duration-base) var(--ease-out);
+  }
+
+  .mobile-nav__panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(340px, 84vw);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 96px 24px 32px;
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border-default);
+    animation: slideIn var(--duration-base) var(--ease-out);
+  }
+
+  .mobile-nav__panel ul {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 20px;
+  }
+
+  .mobile-nav-link {
+    display: block;
+    padding: 15px 6px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-subtle);
+    min-height: 44px;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-nav__backdrop,
+    .mobile-nav__panel {
+      animation: none;
+    }
+  }
+</style>

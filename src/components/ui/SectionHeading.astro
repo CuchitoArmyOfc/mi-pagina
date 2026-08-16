@@ -1,0 +1,45 @@
+---
+export interface Props {
+  eyebrow: string;
+  title: string;
+  description?: string;
+  align?: 'left' | 'center';
+  id?: string;
+}
+
+const { eyebrow, title, description, align = 'left', id } = Astro.props;
+---
+
+<div class:list={['section-heading', `section-heading--${align}`]} data-reveal>
+  <p class="eyebrow">{eyebrow}</p>
+  <h2 id={id}>{title}</h2>
+  {description && <p class="section-heading__desc">{description}</p>}
+</div>
+
+<style>
+  .section-heading {
+    max-width: 640px;
+    margin-bottom: 48px;
+  }
+
+  .section-heading--center {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .section-heading h2 {
+    margin-top: 14px;
+    color: var(--text-primary);
+  }
+
+  .section-heading__desc {
+    margin-top: 18px;
+    font-size: var(--fs-body-lg);
+    color: var(--text-secondary);
+    max-width: 52ch;
+  }
+
+  .section-heading--center .section-heading__desc {
+    margin-inline: auto;
+  }
+</style>

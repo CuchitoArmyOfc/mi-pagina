@@ -1,0 +1,89 @@
+---
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import '@/styles/global.css';
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Cuchito Army Oficial - Comunidad y Servicios 24/7',
+  description = 'Cuchito Army Oficial: comunidad activa 24/7, investigación digital, bot de WhatsApp, contenido premium y canales oficiales de Telegram y WhatsApp.',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL('/logo.png', Astro.site);
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Cuchito Army Oficial',
+  url: Astro.site?.toString(),
+  logo: ogImageURL.toString(),
+  sameAs: [
+    'https://t.me/cuchitoarmy_oficial_peru',
+    'https://whatsapp.com/channel/0029VbBhVrN9sBI6GbQcES0g',
+  ],
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="google-site-verification" content="U5FQU1AojzBS_OpFj0TwmQJk8z0fsJFJ8rITTMPFdP4" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="FantasMindox" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:locale" content="es_ES" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+
+    <link rel="icon" href="/logo.png" type="image/png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} is:inline />
+
+    {/* Runs before paint: only JS-capable browsers get the reveal-on-scroll
+        treatment. If this never runs, every [data-reveal] section stays
+        fully visible (see global.css). */}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Saltar al contenido</a>
+    <div class="noise-layer" aria-hidden="true"></div>
+
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      import '@/scripts/reveal';
+    </script>
+  </body>
+</html>

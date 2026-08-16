@@ -1,0 +1,34 @@
+---
+import Button from '@/components/ui/Button.astro';
+---
+
+<section class="statement">
+  <div class="container statement__inner" data-reveal>
+    <p class="eyebrow">La Army</p>
+    <h2 class="statement__title">Más que canales.<br />Una comunidad que no se apaga.</h2>
+    <Button href="#comunidad" variant="secondary" size="lg" showArrow>Ver todos los canales</Button>
+  </div>
+</section>
+
+<style>
+  .statement {
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--bg-secondary);
+  }
+
+  .statement__inner {
+    padding-block: 72px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 26px;
+    text-align: center;
+  }
+
+  .statement__title {
+    max-width: 18ch;
+    color: var(--text-primary);
+    font-size: clamp(2rem, 5vw, 3.4rem);
+  }
+</style>

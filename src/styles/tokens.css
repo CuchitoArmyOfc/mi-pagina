@@ -1,0 +1,79 @@
+/**
+ * Cuchito Army — Black Edition design tokens.
+ * Orange is the dominant brand color; green/purple/blue are semantic only.
+ */
+:root {
+  /* ---- Surfaces ---- */
+  --bg-primary: #08090d;
+  --bg-secondary: #0b0a12;
+  --surface: #11131a;
+  --surface-elevated: #171a22;
+  --surface-hover: #1c1f28;
+  --border-default: #272a33;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+
+  /* ---- Brand & semantic accents ---- */
+  --orange: #ff9800;
+  --orange-deep: #ff6a00;
+  --green: #62c900;
+  --purple: #8b2cff;
+  --blue: #3568ff;
+
+  /* ---- Text ---- */
+  --text-primary: #f5f5f5;
+  --text-secondary: #a7adb9;
+  --text-tertiary: #747b89;
+
+  /* ---- Gradients ---- */
+  --gradient-primary: linear-gradient(135deg, #ff9800 0%, #ff6a00 100%);
+  --gradient-premium: linear-gradient(135deg, #8b2cff 0%, #6334ff 100%);
+  --gradient-hero-glow: radial-gradient(
+    circle,
+    rgba(255, 152, 0, 0.18) 0%,
+    rgba(255, 152, 0, 0.04) 38%,
+    transparent 70%
+  );
+
+  /* ---- Typography ---- */
+  --font-display: 'Bebas Neue', 'Arial Narrow', sans-serif;
+  --font-body: 'Poppins', system-ui, -apple-system, sans-serif;
+
+  --fs-hero: clamp(3.25rem, 8vw, 8.5rem);
+  --fs-h2: clamp(2.25rem, 5vw, 5rem);
+  --fs-h3: 1.375rem;
+  --fs-body-lg: 1.125rem;
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+
+  /* ---- Spacing ---- */
+  --space-unit: 4px;
+  --section-y: 64px;
+  --content-max: 1280px;
+  --content-wide: 1440px;
+  --page-px: 18px;
+
+  /* ---- Radius ---- */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 160ms;
+  --duration-base: 240ms;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --section-y: 88px;
+    --page-px: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --section-y: 112px;
+    --page-px: 32px;
+  }
+}
