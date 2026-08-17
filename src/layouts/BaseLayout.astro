@@ -9,8 +9,8 @@ export interface Props {
 }
 
 const {
-  title = 'Cuchito Army Oficial - Comunidad y Servicios 24/7',
-  description = 'Cuchito Army Oficial: comunidad activa 24/7, investigación digital, bot de WhatsApp, contenido premium y canales oficiales de Telegram y WhatsApp.',
+  title = 'Cuchito Army Perú - Comunidad Oficial y Servicios 24/7',
+  description = 'Cuchito Army Oficial Perú: comunidad activa 24/7, investigación digital, bot de WhatsApp, contenido premium y canales oficiales de Telegram y WhatsApp.',
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -19,7 +19,7 @@ const ogImageURL = new URL('/logo.png', Astro.site);
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Cuchito Army Oficial',
+  name: 'Cuchito Army Oficial Perú',
   url: Astro.site?.toString(),
   logo: ogImageURL.toString(),
   sameAs: [
