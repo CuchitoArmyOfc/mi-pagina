@@ -35,7 +35,7 @@ export const communityChannels: Channel[] = [
     // CONTENT_CONFLICT: mi-pagina enlazaba a un invite distinto
     // (G3wyFUultJE0viTjmGg7J6). Se usa el invite vigente en producción.
     category: 'Chat directo',
-    href: 'https://chat.whatsapp.com/CSJehlNCqtr36pcwBtoH0j?s=cl&p=a&mlu=4',
+    href: 'https://chat.whatsapp.com/E1bTQcu799PBhvIN7KFmBu?s=cl&p=a&mlu=4',
     cta: 'Abrir chat',
     accent: 'green',
     icon: 'chat',
