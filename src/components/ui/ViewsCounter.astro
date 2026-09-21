@@ -1,0 +1,67 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+
+/**
+ * Real page-view counter (not brand messaging like TrustStrip — see the
+ * note in data/trust.ts). Backed by a free, keyless third-party hit
+ * counter (abacus.jasoncameron.dev) since this site has no server of its
+ * own. Counts page loads, not unique visitors.
+ */
+const namespace = 'cuchitoarmyoficial-com';
+const key = 'home-views';
+---
+
+<div class="views" data-views-namespace={namespace} data-views-key={key}>
+  <Icon name="eye" size={16} strokeWidth={1.8} />
+  <span class="views__count" data-views-count>···</span>
+  <span class="views__label">vistas</span>
+</div>
+
+<script>
+  const nodes = document.querySelectorAll<HTMLElement>('[data-views-namespace]');
+
+  nodes.forEach(async (node) => {
+    const namespace = node.dataset.viewsNamespace;
+    const key = node.dataset.viewsKey;
+    const countEl = node.querySelector<HTMLElement>('[data-views-count]');
+    if (!namespace || !key || !countEl) return;
+
+    try {
+      const res = await fetch(`https://abacus.jasoncameron.dev/hit/${namespace}/${key}`);
+      if (!res.ok) throw new Error('bad response');
+      const data = await res.json();
+      countEl.textContent = new Intl.NumberFormat('es-PE').format(data.value);
+    } catch {
+      countEl.textContent = '—';
+    }
+  });
+</script>
+
+<style>
+  .views {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-size: var(--fs-small);
+  }
+
+  .views :global(svg) {
+    color: var(--orange);
+    flex-shrink: 0;
+  }
+
+  .views__count {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .views__label {
+    color: var(--text-tertiary);
+  }
+</style>
