@@ -30,12 +30,12 @@ export const services: Service[] = [
   {
     id: 'bot-whatsapp',
     title: 'Bot de WhatsApp',
-    description: 'Asistente automatizado con respuestas instantáneas, activo todo el día.',
+    description: 'Asistente automatizado con respuestas instantáneas 24/7, agrega a tu grupo para que funcione.',
     // CONTENT_CONFLICT: mi-pagina tenía +63 945 632 9599; producción sirve
     // +56 9 4508 8740. Se usa el número de producción por ser el vigente.
     category: 'Automatización',
-    href: 'https://wa.me/56945088740',
-    cta: '+56 9 4508 8740',
+    href: 'https://wa.me/573126005287',
+    cta: '+57 312 6005287',
     accent: 'green',
     icon: 'bot',
     external: true,
