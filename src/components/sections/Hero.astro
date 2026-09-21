@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import mascot from '@/assets/mascot.png';
 import Button from '@/components/ui/Button.astro';
+import ViewsCounter from '@/components/ui/ViewsCounter.astro';
 
 const eyebrow = 'Comunidad oficial';
 const subtitle = 'La comunidad de Cuchito Army Perú: contenido, comunidad y servicios en un solo lugar.';
@@ -21,6 +22,7 @@ const subtitle = 'La comunidad de Cuchito Army Perú: contenido, comunidad y ser
         <Button href="#comunidad" size="lg" variant="primary">Únete a la Army</Button>
         <Button href="#servicios" size="lg" variant="secondary" showArrow>Explorar servicios</Button>
       </div>
+      <ViewsCounter />
     </div>
 
     <div class="hero__art" data-reveal>
@@ -119,6 +121,10 @@ const subtitle = 'La comunidad de Cuchito Army Perú: contenido, comunidad y ser
     .hero__actions :global(.btn) {
       width: 100%;
     }
+  }
+
+  .hero__copy :global(.views) {
+    margin-top: 18px;
   }
 
   .hero__art {
