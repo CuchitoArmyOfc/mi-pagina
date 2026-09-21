@@ -6,7 +6,8 @@ import Icon from '@/components/ui/Icon.astro';
  * individual names/numbers and no fabricated per-event claims ("X viewed
  * the page just now"). Real per-visit or per-member activity isn't
  * something this static site can observe, so this stays at the level of
- * brand messaging, same spirit as TrustStrip.
+ * brand messaging, same spirit as TrustStrip (whose own block this one
+ * matches visually — same container width, background, border, radius).
  */
 const messages: string[] = [
   'Nuevo miembro se unió a la Army',
@@ -26,21 +27,30 @@ const track = [...messages, ...messages];
 ---
 
 <section class="ticker" aria-label="Actividad de la comunidad">
-  <div class="ticker__viewport">
-    <ul class="ticker__track">
-      {track.map((message) => (
-        <li class="ticker__item">
-          <Icon name="users" size={15} strokeWidth={1.8} />
-          <span>{message}</span>
-        </li>
-      ))}
-    </ul>
+  <div class="container ticker__panel" data-reveal>
+    <div class="ticker__viewport">
+      <ul class="ticker__track">
+        {track.map((message) => (
+          <li class="ticker__item">
+            <Icon name="users" size={15} strokeWidth={1.8} />
+            <span>{message}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   </div>
 </section>
 
 <style>
   .ticker {
-    padding-block: 6px 0;
+    padding-block: 8px;
+  }
+
+  .ticker__panel {
+    padding: 22px 0;
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
     overflow: hidden;
   }
 
@@ -54,7 +64,7 @@ const track = [...messages, ...messages];
     display: flex;
     gap: 14px;
     width: max-content;
-    padding: 4px var(--page-px);
+    padding-inline: 10px;
     animation: ticker-scroll 42s linear infinite;
   }
 
@@ -64,7 +74,7 @@ const track = [...messages, ...messages];
     gap: 9px;
     flex-shrink: 0;
     padding: 11px 18px;
-    background: var(--surface);
+    background: var(--surface-elevated);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
     font-size: var(--fs-small);
