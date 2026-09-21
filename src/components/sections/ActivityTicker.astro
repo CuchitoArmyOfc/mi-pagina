@@ -22,7 +22,7 @@ const messages: string[] = [
   'Únete a la conversación en vivo',
 ];
 
-// Repeated so the CSS animation loop has no visible seam.
+// Repeated so the vertical scroll loop has no visible seam.
 const track = [...messages, ...messages];
 ---
 
@@ -47,7 +47,7 @@ const track = [...messages, ...messages];
   }
 
   .ticker__panel {
-    padding: 22px 0;
+    padding: 20px;
     background: var(--surface);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
@@ -55,31 +55,29 @@ const track = [...messages, ...messages];
   }
 
   .ticker__viewport {
+    height: 210px;
     overflow: hidden;
-    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
   }
 
   .ticker__track {
     display: flex;
-    gap: 14px;
-    width: max-content;
-    padding-inline: 10px;
-    animation: ticker-scroll 42s linear infinite;
+    flex-direction: column;
+    gap: 10px;
+    animation: ticker-scroll 26s linear infinite;
   }
 
   .ticker__item {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 9px;
-    flex-shrink: 0;
-    padding: 11px 18px;
+    padding: 11px 16px;
     background: var(--surface-elevated);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
     font-size: var(--fs-small);
     color: var(--text-secondary);
-    white-space: nowrap;
   }
 
   .ticker__item :global(svg) {
@@ -89,11 +87,12 @@ const track = [...messages, ...messages];
 
   @keyframes ticker-scroll {
     from {
-      transform: translateX(0);
+      /* Track is doubled, so starting at -50% and animating to 0%
+         moves the visible content downward, then loops with no seam. */
+      transform: translateY(-50%);
     }
     to {
-      /* Track is doubled, so -50% is exactly one full set of messages. */
-      transform: translateX(-50%);
+      transform: translateY(0%);
     }
   }
 
@@ -106,7 +105,7 @@ const track = [...messages, ...messages];
       animation: none;
     }
     .ticker__viewport {
-      overflow-x: auto;
+      overflow-y: auto;
     }
   }
 </style>
