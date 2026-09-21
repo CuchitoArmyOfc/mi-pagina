@@ -1,0 +1,102 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+
+/**
+ * Ambient "community is active" ticker. Deliberately generic — no invented
+ * individual names/numbers and no fabricated per-event claims ("X viewed
+ * the page just now"). Real per-visit or per-member activity isn't
+ * something this static site can observe, so this stays at the level of
+ * brand messaging, same spirit as TrustStrip.
+ */
+const messages: string[] = [
+  'Nuevo miembro se unió a la Army',
+  'Canal de Telegram activo ahora',
+  'Grupo de WhatsApp con movimiento reciente',
+  'Contenido premium disponible 24/7',
+  'Canal de investigación digital abierto',
+  'Pronósticos actualizados hoy',
+  'Comunidad Cuchito Army en crecimiento',
+  'Bot de WhatsApp respondiendo ahora',
+  'Nuevos avisos en el canal oficial',
+  'Únete a la conversación en vivo',
+];
+
+// Repeated so the CSS animation loop has no visible seam.
+const track = [...messages, ...messages];
+---
+
+<section class="ticker" aria-label="Actividad de la comunidad">
+  <div class="ticker__viewport">
+    <ul class="ticker__track">
+      {track.map((message) => (
+        <li class="ticker__item">
+          <Icon name="users" size={15} strokeWidth={1.8} />
+          <span>{message}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .ticker {
+    padding-block: 6px 0;
+    overflow: hidden;
+  }
+
+  .ticker__viewport {
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  }
+
+  .ticker__track {
+    display: flex;
+    gap: 14px;
+    width: max-content;
+    padding: 4px var(--page-px);
+    animation: ticker-scroll 42s linear infinite;
+  }
+
+  .ticker__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    flex-shrink: 0;
+    padding: 11px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-small);
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  .ticker__item :global(svg) {
+    color: #2dd4bf;
+    flex-shrink: 0;
+  }
+
+  @keyframes ticker-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      /* Track is doubled, so -50% is exactly one full set of messages. */
+      transform: translateX(-50%);
+    }
+  }
+
+  .ticker:hover .ticker__track {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticker__track {
+      animation: none;
+    }
+    .ticker__viewport {
+      overflow-x: auto;
+    }
+  }
+</style>
