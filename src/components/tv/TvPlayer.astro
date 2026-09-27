@@ -95,6 +95,7 @@ import SectionHeading from '@/components/ui/SectionHeading.astro';
     background: var(--surface);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
+    min-width: 0;
   }
 
   .tv__brand {
@@ -104,6 +105,7 @@ import SectionHeading from '@/components/ui/SectionHeading.astro';
     font-weight: 700;
     color: var(--text-primary);
     white-space: nowrap;
+    flex: none;
   }
 
   .tv__live-dot {
@@ -123,6 +125,7 @@ import SectionHeading from '@/components/ui/SectionHeading.astro';
   .tv__select {
     margin-left: auto;
     flex: 1 1 auto;
+    min-width: 0;
     max-width: 280px;
     background: var(--surface-elevated);
     color: var(--text-primary);
@@ -131,6 +134,7 @@ import SectionHeading from '@/components/ui/SectionHeading.astro';
     padding: 9px 12px;
     font: inherit;
     outline: none;
+    text-overflow: ellipsis;
   }
 
   .tv__select:focus {
