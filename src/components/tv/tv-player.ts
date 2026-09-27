@@ -166,7 +166,6 @@ if (sel && video && overlay && listEl && groupsEl && statusEl && searchEl) {
   let group = 'all';
   let query = '';
   let shown = PAGE;
-  let hiddenInsecure = 0;
   let current: Channel | null = null;
   let hls: HlsInstance | null = null;
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -238,10 +237,10 @@ if (sel && video && overlay && listEl && groupsEl && statusEl && searchEl) {
     }
   };
 
+  const isInsecure = (ch: Channel): boolean => secure && !ch.url.startsWith('https:');
+
   const setChannels = (data: Channel[]) => {
-    const safe = data.filter((ch) => !ch.groups.includes('xxx'));
-    all = secure ? safe.filter((ch) => ch.url.startsWith('https:')) : safe;
-    hiddenInsecure = safe.length - all.length;
+    all = data.filter((ch) => !ch.groups.includes('xxx'));
     renderGroups();
     applyFilter();
   };
@@ -270,8 +269,9 @@ if (sel && video && overlay && listEl && groupsEl && statusEl && searchEl) {
   const applyFilter = () => {
     const q = norm(query.trim());
     filtered = all.filter((ch) => (group === 'all' || ch.groups.includes(group)) && (!q || norm(ch.name).includes(q)));
+    const insecureCount = filtered.filter(isInsecure).length;
     let msg = filtered.length + (filtered.length === 1 ? ' canal' : ' canales');
-    if (hiddenInsecure) msg += ' · ' + hiddenInsecure + ' ocultos (no compatibles con la web)';
+    if (insecureCount) msg += ' · ' + insecureCount + ' no disponibles (conexión insegura)';
     setStatus(msg);
     renderList();
   };
@@ -287,8 +287,12 @@ if (sel && video && overlay && listEl && groupsEl && statusEl && searchEl) {
     }
     const frag = document.createDocumentFragment();
     for (const ch of filtered.slice(0, shown)) {
+      const insecure = isInsecure(ch);
       const li = document.createElement('li');
-      li.className = 'tv__item' + (current && current.url === ch.url ? ' tv__item--active' : '') + (bad.has(ch.url) ? ' tv__item--bad' : '');
+      li.className = 'tv__item'
+        + (current && current.url === ch.url ? ' tv__item--active' : '')
+        + (bad.has(ch.url) ? ' tv__item--bad' : '')
+        + (insecure ? ' tv__item--insecure' : '');
       li.appendChild(makeLogo(ch));
       const t = document.createElement('div');
       t.className = 'tv__item-text';
@@ -310,6 +314,12 @@ if (sel && video && overlay && listEl && groupsEl && statusEl && searchEl) {
         const s = document.createElement('span');
         s.className = 'tv__tag tv__tag--warn';
         s.textContent = f;
+        meta.appendChild(s);
+      }
+      if (insecure) {
+        const s = document.createElement('span');
+        s.className = 'tv__tag tv__tag--warn';
+        s.textContent = 'No disponible';
         meta.appendChild(s);
       }
       t.append(n, meta);
@@ -350,6 +360,10 @@ if (sel && video && overlay && listEl && groupsEl && statusEl && searchEl) {
   };
 
   const play = (ch: Channel) => {
+    if (isInsecure(ch)) {
+      setStatus('Este canal transmite por una conexión insegura (http) y el navegador no deja reproducirlo dentro de esta página (https).', true);
+      return;
+    }
     stop();
     current = ch;
     triedNative = false;
