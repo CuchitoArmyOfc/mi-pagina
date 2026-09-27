@@ -1,0 +1,465 @@
+---
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+
+/**
+ * TV en Vivo — reproductor de canales gratuitos.
+ * Markup + estilos aquí; la lógica del reproductor vive en ./tv-player.ts.
+ * Los canales se cargan en el navegador de cada visitante desde las listas
+ * públicas de iptv-org (github.com/iptv-org/iptv): un directorio abierto
+ * de canales gratuitos y de acceso libre, que retira cualquier canal
+ * reclamado por su titular. Esta página no aloja, procesa ni reempaqueta
+ * ningún video.
+ */
+---
+
+<section class="tv section">
+  <div class="container">
+    <SectionHeading
+      eyebrow="En vivo"
+      title="TV en Vivo"
+      description="Canales de TV en vivo gratuitos de todo el mundo, organizados por país, idioma y categoría. Elige uno de la lista y dale play."
+    />
+
+    <div class="tv__app">
+      <div class="tv__toolbar">
+        <span class="tv__brand"><span class="tv__live-dot" aria-hidden="true"></span>En vivo</span>
+        <select id="playlist" class="tv__select" aria-label="Lista de canales"></select>
+      </div>
+
+      <div class="tv__layout">
+        <section class="tv__stage">
+          <div class="tv__screen">
+            <video id="video" controls playsinline></video>
+            <div id="overlay" class="tv__overlay"><p>Elige un canal de la lista para empezar.</p></div>
+          </div>
+
+          <div class="tv__now">
+            <div id="nowLogo" class="tv__logo">TV</div>
+            <div class="tv__now-text">
+              <div id="nowName" class="tv__now-name">Ningún canal</div>
+              <div id="nowMeta" class="tv__now-meta"></div>
+            </div>
+            <div class="tv__controls">
+              <button id="prev" class="tv__icon-btn" title="Canal anterior" aria-label="Canal anterior">◀</button>
+              <button id="fav" class="tv__icon-btn" title="Agregar a favoritos" aria-label="Favorito">☆</button>
+              <button id="next" class="tv__icon-btn" title="Canal siguiente" aria-label="Canal siguiente">▶</button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="tv__side">
+          <input id="search" type="search" class="tv__search" placeholder="Buscar canal…" autocomplete="off" />
+          <div id="groups" class="tv__chips"></div>
+          <div id="status" class="tv__status"></div>
+          <ul id="list" class="tv__list"></ul>
+        </aside>
+      </div>
+    </div>
+
+    <p class="tv__disclaimer">
+      Esta página no aloja ningún video. Los canales provienen de la lista pública
+      <a href="https://github.com/iptv-org/iptv" target="_blank" rel="noopener noreferrer">iptv-org/iptv</a>
+      y cada transmisión pertenece a su emisor. Algunos canales pueden estar caídos o bloqueados en tu región.
+    </p>
+  </div>
+</section>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+
+<script>
+  import './tv-player';
+</script>
+
+<style>
+  .tv {
+    min-height: 60vh;
+  }
+
+  .tv__app {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .tv__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .tv__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .tv__live-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #ff3b5c;
+    animation: tvPulse 1.8s infinite;
+  }
+
+  @keyframes tvPulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 59, 92, 0.6); }
+    70% { box-shadow: 0 0 0 9px rgba(255, 59, 92, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 59, 92, 0); }
+  }
+
+  .tv__select {
+    margin-left: auto;
+    flex: 1 1 auto;
+    max-width: 280px;
+    background: var(--surface-elevated);
+    color: var(--text-primary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font: inherit;
+    outline: none;
+  }
+
+  .tv__select:focus {
+    border-color: var(--orange);
+  }
+
+  .tv__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+
+  .tv__stage {
+    min-width: 0;
+  }
+
+  .tv__screen {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .tv__screen video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: #000;
+  }
+
+  .tv__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 24px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.78);
+  }
+
+  .tv__overlay[hidden] {
+    display: none;
+  }
+
+  .tv__overlay p {
+    margin: 0;
+    max-width: 420px;
+    color: var(--text-primary);
+  }
+
+  .tv__spinner {
+    width: 34px;
+    height: 34px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top-color: var(--orange);
+    border-radius: 50%;
+    animation: tvSpin 0.8s linear infinite;
+  }
+
+  @keyframes tvSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  .tv__overlay :global(.tv__btn) {
+    background: var(--gradient-primary);
+    border: 0;
+    border-radius: var(--radius-pill);
+    padding: 10px 20px;
+    font-weight: 600;
+    color: #14100a;
+  }
+
+  .tv__now {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .tv__now-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .tv__now-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tv__now-meta {
+    font-size: var(--fs-small);
+    color: var(--text-tertiary);
+  }
+
+  .tv__controls {
+    display: flex;
+    gap: 6px;
+  }
+
+  .tv__icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-default);
+    background: var(--surface-elevated);
+    color: var(--text-primary);
+    font-size: 16px;
+    display: grid;
+    place-items: center;
+    transition: border-color var(--duration-base) var(--ease-out);
+  }
+
+  .tv__icon-btn:hover {
+    border-color: var(--orange);
+  }
+
+  .tv__icon-btn--on {
+    color: var(--orange);
+    border-color: var(--orange);
+  }
+
+  .tv__side {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .tv__search {
+    flex: none;
+    background: var(--surface-elevated);
+    color: var(--text-primary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font: inherit;
+    outline: none;
+  }
+
+  .tv__search:focus {
+    border-color: var(--orange);
+  }
+
+  .tv__chips {
+    flex: none;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+  }
+
+  .tv__chip {
+    flex: none;
+    border: 1px solid var(--border-default);
+    background: var(--surface-elevated);
+    color: var(--text-tertiary);
+    border-radius: var(--radius-pill);
+    padding: 5px 11px;
+    font-size: 13px;
+  }
+
+  .tv__chip--on {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    color: #14100a;
+    font-weight: 600;
+  }
+
+  .tv__status {
+    flex: none;
+    font-size: var(--fs-small);
+    color: var(--text-tertiary);
+  }
+
+  .tv__status--err {
+    color: var(--orange-deep);
+  }
+
+  .tv__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 120px;
+    max-height: 420px;
+  }
+
+  .tv__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color var(--duration-base) var(--ease-out);
+  }
+
+  .tv__item:hover {
+    background: var(--surface-elevated);
+  }
+
+  .tv__item--active {
+    background: rgba(255, 152, 0, 0.14);
+    box-shadow: inset 0 0 0 1px rgba(255, 152, 0, 0.5);
+  }
+
+  .tv__item--bad {
+    opacity: 0.4;
+  }
+
+  .tv__item-text {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .tv__item-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tv__item-meta {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+
+  .tv__tag {
+    border: 1px solid var(--border-default);
+    border-radius: 6px;
+    padding: 0 5px;
+  }
+
+  .tv__tag--warn {
+    color: var(--orange-deep);
+    border-color: rgba(255, 106, 0, 0.4);
+  }
+
+  .tv__logo {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border-radius: var(--radius-sm);
+    background: var(--surface-elevated);
+    object-fit: contain;
+    padding: 3px;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-tertiary);
+  }
+
+  .tv__now .tv__logo {
+    width: 48px;
+    height: 48px;
+  }
+
+  .tv__more {
+    width: 100%;
+    margin: 6px 0;
+    padding: 9px;
+    border-radius: var(--radius-sm);
+    border: 1px dashed var(--border-default);
+    background: transparent;
+    color: var(--text-tertiary);
+  }
+
+  .tv__empty {
+    padding: 24px 8px;
+    text-align: center;
+    color: var(--text-tertiary);
+  }
+
+  .tv__disclaimer {
+    margin-top: 20px;
+    font-size: var(--fs-small);
+    color: var(--text-tertiary);
+    text-align: center;
+  }
+
+  .tv__disclaimer a {
+    color: var(--text-secondary);
+    text-decoration: underline;
+  }
+
+  @media (min-width: 900px) {
+    .tv__layout {
+      grid-template-columns: minmax(0, 1fr) 380px;
+    }
+
+    .tv__stage {
+      position: sticky;
+      top: calc(72px + 16px);
+    }
+
+    .tv__side {
+      position: sticky;
+      top: calc(72px + 16px);
+      max-height: calc(100vh - 72px - 48px);
+    }
+  }
+
+  @media (max-width: 899.98px) {
+    .tv__stage {
+      position: sticky;
+      top: 72px;
+      z-index: 5;
+      background: var(--bg-primary);
+      padding-bottom: 4px;
+    }
+  }
+</style>
