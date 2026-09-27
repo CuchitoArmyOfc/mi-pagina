@@ -1,7 +1,6 @@
 {
-  "version": 9,
-  "version_nombre": "1.8",
+  "version": 10,
+  "version_nombre": "1.9",
   "url": "https://t.me/cuchitoarmytv",
-  "mensaje": "",
-  "obligatoria": false
+  "mensaje": ""
 }
