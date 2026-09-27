@@ -2,7 +2,7 @@ import type { NavItem } from '@/types/nav';
 
 export const primaryNav: NavItem[] = [
   { label: 'Inicio', href: '#inicio' },
-  { label: 'Pronósticos', href: '#pronosticos' },
+  { label: 'TV en Vivo', href: '/tv-en-vivo' },
   { label: 'Servicios', href: '#servicios' },
   { label: 'Comunidad', href: '#comunidad' },
   { label: 'Premium', href: '#premium' },
