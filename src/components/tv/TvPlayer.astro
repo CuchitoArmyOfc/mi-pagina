@@ -71,6 +71,12 @@ import SectionHeading from '@/components/ui/SectionHeading.astro';
 </script>
 
 <style>
+  /*
+   * Estilos "scoped" normales: solo válidos para elementos que existen
+   * en ESTE archivo al momento de compilar (Astro les agrega un atributo
+   * data-astro-cid-* automáticamente). Todo lo de aquí abajo son
+   * contenedores fijos del template — nunca se reemplazan por JS.
+   */
   .tv {
     min-height: 60vh;
   }
@@ -175,34 +181,6 @@ import SectionHeading from '@/components/ui/SectionHeading.astro';
     display: none;
   }
 
-  .tv__overlay p {
-    margin: 0;
-    max-width: 420px;
-    color: var(--text-primary);
-  }
-
-  .tv__spinner {
-    width: 34px;
-    height: 34px;
-    border: 3px solid rgba(255, 255, 255, 0.2);
-    border-top-color: var(--orange);
-    border-radius: 50%;
-    animation: tvSpin 0.8s linear infinite;
-  }
-
-  @keyframes tvSpin {
-    to { transform: rotate(360deg); }
-  }
-
-  .tv__overlay :global(.tv__btn) {
-    background: var(--gradient-primary);
-    border: 0;
-    border-radius: var(--radius-pill);
-    padding: 10px 20px;
-    font-weight: 600;
-    color: #14100a;
-  }
-
   .tv__now {
     display: flex;
     align-items: center;
@@ -295,23 +273,6 @@ import SectionHeading from '@/components/ui/SectionHeading.astro';
     scrollbar-width: thin;
   }
 
-  .tv__chip {
-    flex: none;
-    border: 1px solid var(--border-default);
-    background: var(--surface-elevated);
-    color: var(--text-tertiary);
-    border-radius: var(--radius-pill);
-    padding: 5px 11px;
-    font-size: 13px;
-  }
-
-  .tv__chip--on {
-    background: var(--gradient-primary);
-    border-color: transparent;
-    color: #14100a;
-    font-weight: 600;
-  }
-
   .tv__status {
     flex: none;
     font-size: var(--fs-small);
@@ -330,6 +291,100 @@ import SectionHeading from '@/components/ui/SectionHeading.astro';
     flex: 1;
     min-height: 120px;
     max-height: 420px;
+  }
+
+  .tv__disclaimer {
+    margin-top: 20px;
+    font-size: var(--fs-small);
+    color: var(--text-tertiary);
+    text-align: center;
+  }
+
+  .tv__disclaimer a {
+    color: var(--text-secondary);
+    text-decoration: underline;
+  }
+
+  @media (min-width: 900px) {
+    .tv__layout {
+      grid-template-columns: minmax(0, 1fr) 380px;
+    }
+
+    .tv__stage {
+      position: sticky;
+      top: calc(72px + 16px);
+    }
+
+    .tv__side {
+      position: sticky;
+      top: calc(72px + 16px);
+      max-height: calc(100vh - 72px - 48px);
+    }
+  }
+
+  @media (max-width: 899.98px) {
+    .tv__stage {
+      position: sticky;
+      top: 72px;
+      z-index: 5;
+      background: var(--bg-primary);
+      padding-bottom: 4px;
+    }
+  }
+</style>
+
+<style is:global>
+  /*
+   * Todo lo de aquí abajo pertenece a elementos que tv-player.ts crea
+   * por JavaScript (logos, filas de la lista, chips de categoría,
+   * overlay del reproductor…). Astro solo aplica su CSS "scoped" a
+   * elementos que existen en el HTML al compilar, así que un <style>
+   * normal nunca llegaría a alcanzar nada de lo que arma el script en
+   * el navegador de cada visitante — por eso este bloque es global.
+   */
+  .tv__overlay p {
+    margin: 0;
+    max-width: 420px;
+    color: var(--text-primary);
+  }
+
+  .tv__spinner {
+    width: 34px;
+    height: 34px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top-color: var(--orange);
+    border-radius: 50%;
+    animation: tvSpin 0.8s linear infinite;
+  }
+
+  @keyframes tvSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  .tv__overlay .tv__btn {
+    background: var(--gradient-primary);
+    border: 0;
+    border-radius: var(--radius-pill);
+    padding: 10px 20px;
+    font-weight: 600;
+    color: #14100a;
+  }
+
+  .tv__chip {
+    flex: none;
+    border: 1px solid var(--border-default);
+    background: var(--surface-elevated);
+    color: var(--text-tertiary);
+    border-radius: var(--radius-pill);
+    padding: 5px 11px;
+    font-size: 13px;
+  }
+
+  .tv__chip--on {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    color: #14100a;
+    font-weight: 600;
   }
 
   .tv__item {
@@ -362,6 +417,7 @@ import SectionHeading from '@/components/ui/SectionHeading.astro';
 
   .tv__item-name {
     font-weight: 600;
+    font-size: 0.92rem;
     color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
@@ -422,44 +478,5 @@ import SectionHeading from '@/components/ui/SectionHeading.astro';
     padding: 24px 8px;
     text-align: center;
     color: var(--text-tertiary);
-  }
-
-  .tv__disclaimer {
-    margin-top: 20px;
-    font-size: var(--fs-small);
-    color: var(--text-tertiary);
-    text-align: center;
-  }
-
-  .tv__disclaimer a {
-    color: var(--text-secondary);
-    text-decoration: underline;
-  }
-
-  @media (min-width: 900px) {
-    .tv__layout {
-      grid-template-columns: minmax(0, 1fr) 380px;
-    }
-
-    .tv__stage {
-      position: sticky;
-      top: calc(72px + 16px);
-    }
-
-    .tv__side {
-      position: sticky;
-      top: calc(72px + 16px);
-      max-height: calc(100vh - 72px - 48px);
-    }
-  }
-
-  @media (max-width: 899.98px) {
-    .tv__stage {
-      position: sticky;
-      top: 72px;
-      z-index: 5;
-      background: var(--bg-primary);
-      padding-bottom: 4px;
-    }
   }
 </style>
