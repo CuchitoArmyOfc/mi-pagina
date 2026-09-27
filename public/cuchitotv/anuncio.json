@@ -1,0 +1,9 @@
+{
+  "activo": true,
+  "titulo": "¡Servicios Digitales a tu Alcance!",
+  "mensaje": "Escribe aquí el anuncio que quieras mostrar.",
+  "imagen": "",
+  "boton_texto": "Enviar mensaje",
+  "boton_url": "https://t.me/fantasmindox",
+  "intervalo_horas": 3
+}
