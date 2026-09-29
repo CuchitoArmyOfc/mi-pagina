@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Cuchito TV · Panel de cuentas</title>
+<style>
+  :root{color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;background:#0b0d12;color:#e7eaf0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding:1.5rem 1rem 3rem}
+  h1{font-size:1.3rem;margin:0 0 .2rem}
+  .sub{color:#9aa3b2;font-size:.9rem;margin:0 0 1.4rem}
+  .wrap{max-width:640px;margin:0 auto}
+  .card{background:#141821;border:1px solid #232838;border-radius:1rem;padding:1.1rem 1.2rem;margin-bottom:1.2rem}
+  label{display:block;font-size:.8rem;color:#9aa3b2;margin-bottom:.35rem}
+  input[type=password],input[type=text]{width:100%;padding:.7rem .8rem;border-radius:.6rem;border:1px solid #2a3042;background:#0f1218;color:#fff;font-size:1rem}
+  button{cursor:pointer;border:0;border-radius:999px;font-weight:700;font-size:.9rem;padding:.6rem 1.1rem;font-family:inherit}
+  .btn-main{background:linear-gradient(135deg,#4f7cff,#7a5cff);color:#fff;width:100%;margin-top:.8rem;padding:.75rem}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.7rem 0;border-bottom:1px solid #1d222f}
+  .row:last-child{border-bottom:0}
+  .row .u{font-weight:700}
+  .row .d{font-size:.75rem;color:#9aa3b2}
+  .badge{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding:.18rem .55rem;border-radius:999px}
+  .badge.pend{background:#4a3a10;color:#ffcf6b}
+  .badge.ok{background:#123a22;color:#6bffa0}
+  .actions{display:flex;gap:.5rem}
+  .btn-ok{background:#1c8a4a;color:#fff}
+  .btn-no{background:#8a1c2f;color:#fff}
+  .empty{color:#9aa3b2;font-size:.9rem;text-align:center;padding:1rem 0}
+  h2{font-size:1rem;margin:0 0 .5rem}
+  .err{color:#ff7a7a;font-size:.85rem;margin-top:.6rem;display:none}
+  .top{display:flex;gap:.6rem}
+  .top input{flex:1}
+  .top button{white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Cuchito TV</h1>
+  <p class="sub">Panel de administración de cuentas</p>
+
+  <div class="card">
+    <label for="key">Clave de administrador</label>
+    <div class="top">
+      <input id="key" type="password" placeholder="ADMIN_KEY">
+      <button class="btn-ok" id="load" type="button">Cargar</button>
+    </div>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="card">
+    <h2>⏳ Pendientes de aprobación</h2>
+    <div id="pend"><div class="empty">Ingresa tu clave y pulsa "Cargar".</div></div>
+  </div>
+
+  <div class="card">
+    <h2>✅ Cuentas aprobadas</h2>
+    <div id="ok"><div class="empty">—</div></div>
+  </div>
+</div>
+
+<script>
+  var API = 'https://cuchitoarmyoficial.com/api';
+  var keyEl = document.getElementById('key'), errEl = document.getElementById('err');
+  var pendEl = document.getElementById('pend'), okEl = document.getElementById('ok');
+
+  try { var saved = localStorage.getItem('adminKey'); if (saved) keyEl.value = saved; } catch (x) {}
+
+  function showErr(msg) { errEl.textContent = msg; errEl.style.display = msg ? 'block' : 'none'; }
+  function fecha(s) { try { return new Date(s).toLocaleString('es-PE', { timeZone: 'America/Lima', hour12: false }); } catch (x) { return s; } }
+
+  function renderRow(u) {
+    var row = document.createElement('div');
+    row.className = 'row';
+    var badge = u.aprobado ? '<span class="badge ok">Aprobado</span>' : '<span class="badge pend">Pendiente</span>';
+    row.innerHTML =
+      '<div><div class="u">' + u.usuario + ' ' + badge + '</div><div class="d">' + fecha(u.creado_en) + '</div></div>' +
+      '<div class="actions"></div>';
+    var actions = row.querySelector('.actions');
+    if (!u.aprobado) {
+      var bOk = document.createElement('button'); bOk.className = 'btn-ok'; bOk.textContent = 'Aprobar';
+      bOk.onclick = function () { accionar(u.id, 'aprobar'); };
+      var bNo = document.createElement('button'); bNo.className = 'btn-no'; bNo.textContent = 'Rechazar';
+      bNo.onclick = function () { if (confirm('¿Rechazar y borrar la cuenta "' + u.usuario + '"?')) accionar(u.id, 'rechazar'); };
+      actions.appendChild(bOk); actions.appendChild(bNo);
+    } else {
+      var bDel = document.createElement('button'); bDel.className = 'btn-no'; bDel.textContent = 'Eliminar';
+      bDel.onclick = function () { if (confirm('¿Eliminar la cuenta "' + u.usuario + '"?')) accionar(u.id, 'rechazar'); };
+      actions.appendChild(bDel);
+    }
+    return row;
+  }
+
+  function cargar() {
+    var key = keyEl.value.trim();
+    if (!key) { showErr('Escribe tu clave de administrador.'); return; }
+    try { localStorage.setItem('adminKey', key); } catch (x) {}
+    showErr('');
+    pendEl.innerHTML = '<div class="empty">Cargando…</div>';
+    okEl.innerHTML = '';
+    fetch(API + '/pendientes?key=' + encodeURIComponent(key))
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d || !d.ok) { showErr('Clave incorrecta o error del servidor.'); pendEl.innerHTML = ''; return; }
+        var pend = d.usuarios.filter(function (u) { return !u.aprobado; });
+        var ok = d.usuarios.filter(function (u) { return u.aprobado; });
+        pendEl.innerHTML = ''; okEl.innerHTML = '';
+        if (!pend.length) pendEl.innerHTML = '<div class="empty">No hay cuentas pendientes.</div>';
+        else pend.forEach(function (u) { pendEl.appendChild(renderRow(u)); });
+        if (!ok.length) okEl.innerHTML = '<div class="empty">Todavía no hay cuentas aprobadas.</div>';
+        else ok.forEach(function (u) { okEl.appendChild(renderRow(u)); });
+      })
+      .catch(function () { showErr('Sin conexión con el servidor.'); pendEl.innerHTML = ''; });
+  }
+
+  function accionar(id, accion) {
+    var key = keyEl.value.trim();
+    fetch(API + '/aprobar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: key, id: id, accion: accion })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { if (d && d.ok) cargar(); else showErr('No se pudo completar la acción.'); })
+      .catch(function () { showErr('Sin conexión con el servidor.'); });
+  }
+
+  document.getElementById('load').onclick = cargar;
+  keyEl.addEventListener('keydown', function (e) { if (e.key === 'Enter') cargar(); });
+  if (keyEl.value) cargar();
+</script>
+</body>
+</html>
