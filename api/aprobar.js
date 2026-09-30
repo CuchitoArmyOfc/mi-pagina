@@ -1,4 +1,4 @@
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
@@ -10,7 +10,7 @@ function setCors(res) {
 
 // POST { key, id, accion }   accion: 'aprobar' (por defecto) | 'rechazar'
 // -> { ok:true }
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ ok: false, motivo: 'metodo_invalido' });
@@ -40,4 +40,4 @@ module.exports = async (req, res) => {
   } catch (e) {
     return res.status(200).json({ ok: false, motivo: 'error_servidor' });
   }
-};
+}

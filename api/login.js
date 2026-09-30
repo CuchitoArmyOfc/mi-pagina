@@ -1,5 +1,5 @@
-const { createClient } = require('@supabase/supabase-js');
-const bcrypt = require('bcryptjs');
+import { createClient } from '@supabase/supabase-js';
+import bcrypt from 'bcryptjs';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
@@ -14,7 +14,7 @@ function setCors(res) {
 // -> { ok:false, motivo:'pendiente' }          existe pero un admin no la aprobó todavía
 // -> { ok:false, motivo:'no_existe' }          no hay cuenta con ese usuario
 // -> { ok:false, motivo:'clave_incorrecta' }   usuario existe, contraseña no coincide
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ ok: false, motivo: 'metodo_invalido' });
@@ -38,4 +38,4 @@ module.exports = async (req, res) => {
   } catch (e) {
     return res.status(200).json({ ok: false, motivo: 'error_servidor' });
   }
-};
+}
