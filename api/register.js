@@ -22,7 +22,7 @@ async function notifyTelegram(text) {
 }
 
 // POST { usuario, password }
-// -> { ok:true }                                cuenta creada, queda pendiente de aprobación
+// -> { ok:true }                                cuenta creada y activada al instante
 // -> { ok:false, motivo:'usuario_invalido' }
 // -> { ok:false, motivo:'password_invalida' }
 // -> { ok:false, motivo:'usuario_existe' }
@@ -48,16 +48,16 @@ export default async function handler(req, res) {
     if (sel.data) return res.status(200).json({ ok: false, motivo: 'usuario_existe' });
 
     var hash = await bcrypt.hash(password, 10);
-    var ins = await supabase.from('usuarios').insert({ usuario: usuario, password_hash: hash, aprobado: false });
+    // aprobado: true -> las cuentas quedan activas al instante, sin revisión manual.
+    var ins = await supabase.from('usuarios').insert({ usuario: usuario, password_hash: hash, aprobado: true });
     if (ins.error) return res.status(200).json({ ok: false, motivo: 'error_servidor' });
 
     // Se espera a que termine antes de responder: en Vercel la función puede
     // cortarse apenas se envía la respuesta, y un fetch "en segundo plano"
     // sin await se pierde a mitad de camino.
     await notifyTelegram(
-      '🆕 Nueva cuenta pendiente de aprobación — Cuchito TV\n' +
-      '👤 Usuario: ' + usuario + '\n\n' +
-      'Entra al panel admin.html para aprobarla o rechazarla.'
+      '✅ Nueva cuenta creada (activada automáticamente) — Cuchito TV\n' +
+      '👤 Usuario: ' + usuario
     );
 
     return res.status(200).json({ ok: true });
