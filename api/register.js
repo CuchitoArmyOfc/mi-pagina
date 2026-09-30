@@ -51,7 +51,10 @@ export default async function handler(req, res) {
     var ins = await supabase.from('usuarios').insert({ usuario: usuario, password_hash: hash, aprobado: false });
     if (ins.error) return res.status(200).json({ ok: false, motivo: 'error_servidor' });
 
-    notifyTelegram(
+    // Se espera a que termine antes de responder: en Vercel la función puede
+    // cortarse apenas se envía la respuesta, y un fetch "en segundo plano"
+    // sin await se pierde a mitad de camino.
+    await notifyTelegram(
       '🆕 Nueva cuenta pendiente de aprobación — Cuchito TV\n' +
       '👤 Usuario: ' + usuario + '\n\n' +
       'Entra al panel admin.html para aprobarla o rechazarla.'
