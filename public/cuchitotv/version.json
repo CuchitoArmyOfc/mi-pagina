@@ -1,6 +1,6 @@
 {
-  "version": 14,
-  "version_nombre": "1.13",
+  "version": 15,
+  "version_nombre": "1.14",
   "url": "https://t.me/cuchitoarmytv",
-  "mensaje": ""
+  "mensaje": "Nuevo: ahora el video sigue reproduciéndose en una ventana flotante al salir de la app (como TikTok)."
 }
